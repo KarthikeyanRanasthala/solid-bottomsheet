@@ -1,0 +1,18 @@
+{
+  "name": "solid-bottomsheet",
+  "version": "0.0.0",
+  "description": "A bottomsheet UI component for Solid JS",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KarthikeyanRanasthala/solid-bottomsheet.git"
+  },
+  "keywords": ["solid", "solidjs", "bottomsheet", "drawer", "ui", "component"],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/KarthikeyanRanasthala/solid-bottomsheet/issues"
+  },
+  "homepage": "https://github.com/KarthikeyanRanasthala/solid-bottomsheet#readme"
+}
