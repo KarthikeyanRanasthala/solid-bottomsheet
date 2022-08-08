@@ -3,16 +3,54 @@
   "version": "0.0.0",
   "description": "A bottomsheet UI component for Solid JS",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/KarthikeyanRanasthala/solid-bottomsheet.git"
   },
-  "keywords": ["solid", "solidjs", "bottomsheet", "drawer", "ui", "component"],
+  "keywords": [
+    "solid",
+    "solidjs",
+    "bottomsheet",
+    "drawer",
+    "ui",
+    "component"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/KarthikeyanRanasthala/solid-bottomsheet/issues"
   },
-  "homepage": "https://github.com/KarthikeyanRanasthala/solid-bottomsheet#readme"
+  "homepage": "https://github.com/KarthikeyanRanasthala/solid-bottomsheet#readme",
+  "devDependencies": {
+    "rollup": "2.77.2",
+    "rollup-plugin-copy": "3.4.0",
+    "rollup-preset-solid": "1.4.0",
+    "typescript": "4.7.4"
+  },
+  "peerDependencies": {
+    "solid-js": ">=1.0.0"
+  },
+  "private": false,
+  "sideEffects": false,
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "solid": "./dist/source/index.jsx",
+      "import": "./dist/esm/index.js",
+      "browser": {
+        "import": "./dist/esm/index.js",
+        "require": "./dist/cjs/index.js"
+      },
+      "require": "./dist/cjs/index.js",
+      "node": "./dist/cjs/index.js"
+    },
+    "./styles.css": "./dist/styles.css"
+  }
 }
