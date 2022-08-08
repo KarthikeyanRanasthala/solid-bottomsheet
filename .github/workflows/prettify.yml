@@ -1,0 +1,29 @@
+name: Prettify
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-prettier:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js environment
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Prettify
+        run: npm run prettify
+
+      - name: Add, Commit and Push
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "Prettify"
