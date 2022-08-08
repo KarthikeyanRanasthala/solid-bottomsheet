@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "description": "A bottomsheet UI component for Solid JS",
   "scripts": {
-    "build": "rollup -c"
+    "build": "rollup -c",
+    "prettify": "prettier --write ."
   },
   "repository": {
     "type": "git",
@@ -23,6 +24,7 @@
   },
   "homepage": "https://github.com/KarthikeyanRanasthala/solid-bottomsheet#readme",
   "devDependencies": {
+    "prettier": "2.7.1",
     "rollup": "2.77.2",
     "rollup-plugin-copy": "3.4.0",
     "rollup-preset-solid": "1.4.0",
