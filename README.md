@@ -4,6 +4,16 @@
 
 A light-weight Bottomsheet UI component for [Solid JS](https://www.solidjs.com/) with zero dependencies.
 
+## Features
+
+- Smooth animations
+- Swipe down to close
+- Predefined swipe down threshold to auto close
+- Click/Touch outside (overlay) to close
+
+![solid-bottomsheet](https://user-images.githubusercontent.com/7726029/183614467-d7d20449-1f6e-4ac0-9763-7ddf59194d27.gif)
+
+
 ## Installation
 
 ```
@@ -15,8 +25,8 @@ npm install solid-bottomsheet
 ```jsx
 // App.jsx
 
-import "solid-bottomsheet/styles.css";
-import { SolidBottomsheet } from "solid-bottomsheet";
+import "solid-bottomsheet/styles.css"
+import { SolidBottomsheet } from "solid-bottomsheet"
 
 const App = () => {
   const [isOpen, setOpen] = createSignal(false);
@@ -34,7 +44,6 @@ const App = () => {
 ```
 
 ## Todo
-
 - (Docs) Add interactive example with stackblitz/codesandbox
 - (Docs) Add examples to use the package with skypack and others
 - (Feat) Make swipe down threshold configurable
