@@ -4,7 +4,8 @@
   "description": "A bottomsheet UI component for Solid JS",
   "scripts": {
     "build": "rollup -c",
-    "prettify": "prettier --write ."
+    "prettify": "prettier --write .",
+    "release": "npm run build && changeset publish"
   },
   "repository": {
     "type": "git",
