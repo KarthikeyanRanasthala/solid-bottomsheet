@@ -56,5 +56,8 @@
       "node": "./dist/cjs/index.js"
     },
     "./styles.css": "./dist/styles.css"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
