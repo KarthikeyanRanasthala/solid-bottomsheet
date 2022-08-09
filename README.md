@@ -15,8 +15,8 @@ npm install solid-bottomsheet
 ```jsx
 // App.jsx
 
-import "solid-bottomsheet/styles.css"
-import { SolidBottomsheet } from "solid-bottomsheet"
+import "solid-bottomsheet/styles.css";
+import { SolidBottomsheet } from "solid-bottomsheet";
 
 const App = () => {
   const [isOpen, setOpen] = createSignal(false);
@@ -34,6 +34,7 @@ const App = () => {
 ```
 
 ## Todo
+
 - (Docs) Add interactive example with stackblitz/codesandbox
 - (Docs) Add examples to use the package with skypack and others
 - (Feat) Make swipe down threshold configurable
