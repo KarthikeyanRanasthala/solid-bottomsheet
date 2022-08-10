@@ -4,6 +4,10 @@
 
 A light-weight Bottomsheet UI component for [Solid JS](https://www.solidjs.com/) with zero dependencies.
 
+## Demo
+
+- [CodeSandbox](https://codesandbox.io/s/solid-bottomsheet-rhu1vt?resolutionWidth=320&resolutionHeight=675&file=/src/App.tsx)
+
 ## Features
 
 - Smooth animations
