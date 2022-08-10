@@ -1,6 +1,9 @@
 {
   "$schema": "https://unpkg.com/@changesets/config@2.1.1/schema.json",
-  "changelog": "@changesets/cli/changelog",
+  "changelog": [
+    "@changesets/changelog-github",
+    { "repo": "KarthikeyanRanasthala/solid-bottomsheet" }
+  ],
   "commit": true,
   "fixed": [],
   "linked": [],
