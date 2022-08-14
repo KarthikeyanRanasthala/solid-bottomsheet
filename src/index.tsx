@@ -129,11 +129,11 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
           classList={{
             "sb-content": true,
             "sb-is-closing": isClosing(),
-            "sb-snap-variant": isSnapVariant,
             "sb-is-snapping": isSnapping(),
           }}
           style={{
             transform: `translateY(${bottomsheetTranslateValue()}px)`,
+            ...(isSnapVariant ? { height: maxHeight } : {}),
           }}
           {...(isClosing() ? { onAnimationEnd: props.onClose } : {})}
         >
