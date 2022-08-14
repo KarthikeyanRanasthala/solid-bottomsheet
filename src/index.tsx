@@ -65,7 +65,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
     if (isSnapVariant) {
       const defaultValue = props.defaultSnapPoint({ maxHeight: maxHeight() });
       if (defaultValue !== maxHeight()) {
-        return defaultValue;
+        return window.innerHeight - defaultValue;
       }
     }
     return 0;
