@@ -23,27 +23,35 @@ export type SolidBottomsheetProps = DefaultVariantProps | SnapVariantProps;
 export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
   const isSnapVariant = props.variant === "snap";
 
-  const maxHeight = window.visualViewport.height;
+  const [maxHeight, setMaxHeight] = createSignal(window.visualViewport.height);
 
   const snapPoints = isSnapVariant
-    ? [0, ...props.snapPoints({ maxHeight }).sort((a, b) => b - a)]
+    ? [0, ...props.snapPoints({ maxHeight: maxHeight() }).sort((a, b) => b - a)]
     : [];
 
   let touchStartPosition = 0;
   let lastTouchPosition = 0;
 
+  const onViewportChange = () => {
+    setMaxHeight(window.visualViewport.height);
+  };
+
   onMount(() => {
     document.body.classList.add("sb-overflow-hidden");
+    window.visualViewport.addEventListener("resize", onViewportChange);
   });
 
   onCleanup(() => {
     document.body.classList.remove("sb-overflow-hidden");
+    window.visualViewport.removeEventListener("resize", onViewportChange);
   });
 
   const [isClosing, setIsClosing] = createSignal(false);
   const [isSnapping, setIsSnapping] = createSignal(false);
   const [bottomsheetTranslateValue, setBottomsheetTranslateValue] =
-    createSignal(isSnapVariant ? props.defaultSnapPoint({ maxHeight }) : 0);
+    createSignal(
+      isSnapVariant ? props.defaultSnapPoint({ maxHeight: maxHeight() }) : 0
+    );
 
   const onTouchStart: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = (
     event
@@ -62,7 +70,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
         dragDistance = event.touches[0].clientY - lastTouchPosition;
 
         setBottomsheetTranslateValue((previousVal) =>
-          Math.min(Math.max(previousVal + dragDistance, 0), maxHeight)
+          Math.min(Math.max(previousVal + dragDistance, 0), maxHeight())
         );
 
         lastTouchPosition = event.touches[0].clientY;
@@ -84,7 +92,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
   const onTouchEnd: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = () => {
     switch (props.variant) {
       case "snap":
-        const currentPoint = maxHeight - lastTouchPosition;
+        const currentPoint = maxHeight() - lastTouchPosition;
 
         const closest = snapPoints.reduce((previousVal, currentVal) => {
           return Math.abs(currentVal - currentPoint) <
@@ -99,7 +107,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
         }
 
         setIsSnapping(true);
-        setBottomsheetTranslateValue(maxHeight - closest);
+        setBottomsheetTranslateValue(maxHeight() - closest);
 
         break;
       case "default":
