@@ -23,13 +23,10 @@ export type SolidBottomsheetProps = DefaultVariantProps | SnapVariantProps;
 export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
   const isSnapVariant = props.variant === "snap";
 
+  const maxHeight = window.visualViewport.height;
+
   const snapPoints = isSnapVariant
-    ? [
-        0,
-        ...props
-          .snapPoints({ maxHeight: window.innerHeight })
-          .sort((a, b) => b - a),
-      ]
+    ? [0, ...props.snapPoints({ maxHeight }).sort((a, b) => b - a)]
     : [];
 
   let touchStartPosition = 0;
@@ -46,11 +43,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
   const [isClosing, setIsClosing] = createSignal(false);
   const [isSnapping, setIsSnapping] = createSignal(false);
   const [bottomsheetTranslateValue, setBottomsheetTranslateValue] =
-    createSignal(
-      isSnapVariant
-        ? props.defaultSnapPoint({ maxHeight: window.innerHeight })
-        : 0
-    );
+    createSignal(isSnapVariant ? props.defaultSnapPoint({ maxHeight }) : 0);
 
   const onTouchStart: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = (
     event
@@ -69,7 +62,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
         dragDistance = event.touches[0].clientY - lastTouchPosition;
 
         setBottomsheetTranslateValue((previousVal) =>
-          Math.min(Math.max(previousVal + dragDistance, 0), window.innerHeight)
+          Math.min(Math.max(previousVal + dragDistance, 0), maxHeight)
         );
 
         lastTouchPosition = event.touches[0].clientY;
@@ -91,7 +84,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
   const onTouchEnd: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = () => {
     switch (props.variant) {
       case "snap":
-        const currentPoint = window.innerHeight - lastTouchPosition;
+        const currentPoint = maxHeight - lastTouchPosition;
 
         const closest = snapPoints.reduce((previousVal, currentVal) => {
           return Math.abs(currentVal - currentPoint) <
@@ -106,7 +99,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
         }
 
         setIsSnapping(true);
-        setBottomsheetTranslateValue(window.innerHeight - closest);
+        setBottomsheetTranslateValue(maxHeight - closest);
 
         break;
       case "default":
