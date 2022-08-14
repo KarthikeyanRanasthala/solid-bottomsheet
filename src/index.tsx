@@ -141,7 +141,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
           }}
           style={{
             transform: `translateY(${bottomsheetTranslateValue()}px)`,
-            ...(isSnapVariant ? { height: `${maxHeight}px` } : {}),
+            ...(isSnapVariant ? { height: `${maxHeight()}px` } : {}),
           }}
           {...(isClosing() ? { onAnimationEnd: props.onClose } : {})}
         >
