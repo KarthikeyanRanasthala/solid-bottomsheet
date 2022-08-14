@@ -1,51 +1,147 @@
 import { Portal } from "solid-js/web";
-import { Component, createSignal, JSX, onCleanup, onMount } from "solid-js";
+import {
+  Component,
+  createEffect,
+  createSignal,
+  JSX,
+  onCleanup,
+  onMount,
+} from "solid-js";
 
 const DEFAULT_THRESHOLD = 50;
 
-export interface SolidBottomsheetProps {
+export interface BaseSolidBottomsheetProps {
   children: JSX.Element;
   onClose: () => void;
 }
 
+export interface DefaultVariantProps extends BaseSolidBottomsheetProps {
+  variant: "default";
+}
+
+export interface SnapVariantProps extends BaseSolidBottomsheetProps {
+  variant: "snap";
+  defaultSnapPoint: ({ maxHeight }: { maxHeight: number }) => number;
+  snapPoints: ({ maxHeight }: { maxHeight: number }) => number[];
+}
+
+export type SolidBottomsheetProps = DefaultVariantProps | SnapVariantProps;
+
 export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
+  const isSnapVariant = props.variant === "snap";
+
+  const [maxHeight, setMaxHeight] = createSignal(window.visualViewport.height);
+
+  const getSnapPoints = (maxHeight: number): number[] => {
+    return isSnapVariant
+      ? [0, ...props.snapPoints({ maxHeight }).sort((a, b) => b - a)]
+      : [];
+  };
+
+  let snapPoints: number[] = [];
+
   let touchStartPosition = 0;
   let lastTouchPosition = 0;
 
+  const onViewportChange = () => {
+    setMaxHeight(window.visualViewport.height);
+  };
+
+  createEffect(() => {
+    snapPoints = getSnapPoints(maxHeight());
+  });
+
   onMount(() => {
     document.body.classList.add("sb-overflow-hidden");
+    window.visualViewport.addEventListener("resize", onViewportChange);
   });
 
   onCleanup(() => {
     document.body.classList.remove("sb-overflow-hidden");
+    window.visualViewport.removeEventListener("resize", onViewportChange);
   });
 
+  const getDefaultTranslateValue = () => {
+    if (isSnapVariant) {
+      const defaultValue = props.defaultSnapPoint({ maxHeight: maxHeight() });
+      if (defaultValue !== maxHeight()) {
+        return window.innerHeight - defaultValue;
+      }
+    }
+    return 0;
+  };
+
   const [isClosing, setIsClosing] = createSignal(false);
-  const [bottomsheetTranslatePosition, setBottomsheetTranslatePosition] =
-    createSignal(0);
+  const [isSnapping, setIsSnapping] = createSignal(false);
+  const [bottomsheetTranslateValue, setBottomsheetTranslateValue] =
+    createSignal(getDefaultTranslateValue());
 
   const onTouchStart: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = (
     event
   ) => {
-    touchStartPosition = event.touches[0].screenY;
+    isSnapVariant && setIsSnapping(false);
+
+    touchStartPosition = lastTouchPosition = event.touches[0].clientY;
   };
 
   const onTouchMove: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = (
     event
   ) => {
-    lastTouchPosition = event.touches[0].screenY;
+    let dragDistance = 0;
+    switch (props.variant) {
+      case "snap":
+        dragDistance = event.touches[0].clientY - lastTouchPosition;
 
-    const dragDistance = lastTouchPosition - touchStartPosition;
-    if (dragDistance > 0) {
-      setBottomsheetTranslatePosition(dragDistance);
+        setBottomsheetTranslateValue((previousVal) =>
+          Math.min(Math.max(previousVal + dragDistance, 0), maxHeight())
+        );
+
+        lastTouchPosition = event.touches[0].clientY;
+
+        break;
+      case "default":
+      default:
+        lastTouchPosition = event.touches[0].clientY;
+        dragDistance = lastTouchPosition - touchStartPosition;
+
+        if (dragDistance > 0) {
+          setBottomsheetTranslateValue(dragDistance);
+        }
+
+        break;
     }
   };
 
   const onTouchEnd: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = () => {
-    if (lastTouchPosition - touchStartPosition > DEFAULT_THRESHOLD) {
-      setIsClosing(true);
-    } else {
-      setBottomsheetTranslatePosition(0);
+    switch (props.variant) {
+      case "snap":
+        const currentPoint = maxHeight() - lastTouchPosition;
+
+        const closest = snapPoints.reduce((previousVal, currentVal) => {
+          return Math.abs(currentVal - currentPoint) <
+            Math.abs(previousVal - currentPoint)
+            ? currentVal
+            : previousVal;
+        });
+
+        if (closest === 0) {
+          setIsClosing(true);
+          break;
+        }
+
+        setIsSnapping(true);
+        setBottomsheetTranslateValue(maxHeight() - closest);
+
+        break;
+      case "default":
+      default:
+        if (lastTouchPosition - touchStartPosition > DEFAULT_THRESHOLD) {
+          setIsClosing(true);
+        } else {
+          setBottomsheetTranslateValue(0);
+        }
+
+        break;
     }
   };
 
@@ -64,9 +160,11 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
           classList={{
             "sb-content": true,
             "sb-is-closing": isClosing(),
+            "sb-is-snapping": isSnapping(),
           }}
           style={{
-            transform: `translateY(${bottomsheetTranslatePosition()}px)`,
+            transform: `translateY(${bottomsheetTranslateValue()}px)`,
+            ...(isSnapVariant ? { height: `${maxHeight()}px` } : {}),
           }}
           {...(isClosing() ? { onAnimationEnd: props.onClose } : {})}
         >

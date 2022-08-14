@@ -31,6 +31,10 @@
   animation: slide-up 0.2s ease;
 }
 
+.sb-content.sb-is-snapping {
+  transition: transform 0.2s ease;
+}
+
 .sb-content.sb-is-closing {
   animation: slide-down 0.2s ease;
 }
