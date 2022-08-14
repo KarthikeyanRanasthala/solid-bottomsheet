@@ -57,7 +57,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
   ) => {
     isSnapVariant && setIsSnapping(false);
 
-    touchStartPosition = lastTouchPosition = event.touches[0].screenY;
+    touchStartPosition = lastTouchPosition = event.touches[0].clientY;
   };
 
   const onTouchMove: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = (
@@ -77,7 +77,7 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
         break;
       case "default":
       default:
-        lastTouchPosition = event.touches[0].screenY;
+        lastTouchPosition = event.touches[0].clientY;
         dragDistance = lastTouchPosition - touchStartPosition;
 
         if (dragDistance > 0) {
