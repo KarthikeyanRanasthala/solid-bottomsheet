@@ -1,5 +1,12 @@
 import { Portal } from "solid-js/web";
-import { Component, createSignal, JSX, onCleanup, onMount } from "solid-js";
+import {
+  Component,
+  createEffect,
+  createSignal,
+  JSX,
+  onCleanup,
+  onMount,
+} from "solid-js";
 
 const DEFAULT_THRESHOLD = 50;
 
@@ -25,9 +32,13 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
 
   const [maxHeight, setMaxHeight] = createSignal(window.visualViewport.height);
 
-  const snapPoints = isSnapVariant
-    ? [0, ...props.snapPoints({ maxHeight: maxHeight() }).sort((a, b) => b - a)]
-    : [];
+  const getSnapPoints = (maxHeight: number): number[] => {
+    return isSnapVariant
+      ? [0, ...props.snapPoints({ maxHeight }).sort((a, b) => b - a)]
+      : [];
+  };
+
+  let snapPoints: number[] = [];
 
   let touchStartPosition = 0;
   let lastTouchPosition = 0;
@@ -35,6 +46,10 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
   const onViewportChange = () => {
     setMaxHeight(window.visualViewport.height);
   };
+
+  createEffect(() => {
+    snapPoints = getSnapPoints(maxHeight());
+  });
 
   onMount(() => {
     document.body.classList.add("sb-overflow-hidden");
@@ -46,12 +61,20 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
     window.visualViewport.removeEventListener("resize", onViewportChange);
   });
 
+  const getDefaultTranslateValue = () => {
+    if (isSnapVariant) {
+      const defaultValue = props.defaultSnapPoint({ maxHeight: maxHeight() });
+      if (defaultValue !== maxHeight()) {
+        return defaultValue;
+      }
+    }
+    return 0;
+  };
+
   const [isClosing, setIsClosing] = createSignal(false);
   const [isSnapping, setIsSnapping] = createSignal(false);
   const [bottomsheetTranslateValue, setBottomsheetTranslateValue] =
-    createSignal(
-      isSnapVariant ? props.defaultSnapPoint({ maxHeight: maxHeight() }) : 0
-    );
+    createSignal(getDefaultTranslateValue());
 
   const onTouchStart: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = (
     event
