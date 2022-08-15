@@ -31,35 +31,8 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
   const isSnapVariant = props.variant === "snap";
 
   const [maxHeight, setMaxHeight] = createSignal(window.visualViewport.height);
-
-  const getSnapPoints = (maxHeight: number): number[] => {
-    return isSnapVariant
-      ? [0, ...props.snapPoints({ maxHeight }).sort((a, b) => b - a)]
-      : [];
-  };
-
-  let snapPoints: number[] = [];
-
-  let touchStartPosition = 0;
-  let lastTouchPosition = 0;
-
-  const onViewportChange = () => {
-    setMaxHeight(window.visualViewport.height);
-  };
-
-  createEffect(() => {
-    snapPoints = getSnapPoints(maxHeight());
-  });
-
-  onMount(() => {
-    document.body.classList.add("sb-overflow-hidden");
-    window.visualViewport.addEventListener("resize", onViewportChange);
-  });
-
-  onCleanup(() => {
-    document.body.classList.remove("sb-overflow-hidden");
-    window.visualViewport.removeEventListener("resize", onViewportChange);
-  });
+  const [isClosing, setIsClosing] = createSignal(false);
+  const [isSnapping, setIsSnapping] = createSignal(false);
 
   const getDefaultTranslateValue = () => {
     if (isSnapVariant) {
@@ -71,10 +44,44 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
     return 0;
   };
 
-  const [isClosing, setIsClosing] = createSignal(false);
-  const [isSnapping, setIsSnapping] = createSignal(false);
+  const getSnapPoints = (maxHeight: number): number[] => {
+    return isSnapVariant
+      ? [0, ...props.snapPoints({ maxHeight }).sort((a, b) => b - a)]
+      : [];
+  };
+
+  const clampInRange = ({
+    minimum,
+    maximum,
+    current,
+  }: Record<"minimum" | "maximum" | "current", number>): number =>
+    Math.min(Math.max(current, minimum), maximum);
+
   const [bottomsheetTranslateValue, setBottomsheetTranslateValue] =
     createSignal(getDefaultTranslateValue());
+
+  const onViewportChange = () => {
+    setMaxHeight(window.visualViewport.height);
+  };
+
+  onMount(() => {
+    document.body.classList.add("sb-overflow-hidden");
+    window.visualViewport.addEventListener("resize", onViewportChange);
+  });
+
+  onCleanup(() => {
+    document.body.classList.remove("sb-overflow-hidden");
+    window.visualViewport.removeEventListener("resize", onViewportChange);
+  });
+
+  createEffect(() => {
+    snapPoints = getSnapPoints(maxHeight());
+  });
+
+  let snapPoints: number[] = [];
+
+  let touchStartPosition = 0;
+  let lastTouchPosition = 0;
 
   const onTouchStart: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = (
     event
@@ -88,12 +95,17 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
     event
   ) => {
     let dragDistance = 0;
+
     switch (props.variant) {
       case "snap":
         dragDistance = event.touches[0].clientY - lastTouchPosition;
 
         setBottomsheetTranslateValue((previousVal) =>
-          Math.min(Math.max(previousVal + dragDistance, 0), maxHeight())
+          clampInRange({
+            minimum: 0,
+            maximum: maxHeight(),
+            current: previousVal + dragDistance,
+          })
         );
 
         lastTouchPosition = event.touches[0].clientY;
@@ -113,24 +125,27 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
   };
 
   const onTouchEnd: JSX.EventHandlerUnion<HTMLDivElement, TouchEvent> = () => {
+    let currentPoint = 0;
+    let closestPoint = 0;
+
     switch (props.variant) {
       case "snap":
-        const currentPoint = maxHeight() - lastTouchPosition;
+        currentPoint = maxHeight() - lastTouchPosition;
 
-        const closest = snapPoints.reduce((previousVal, currentVal) => {
+        closestPoint = snapPoints.reduce((previousVal, currentVal) => {
           return Math.abs(currentVal - currentPoint) <
             Math.abs(previousVal - currentPoint)
             ? currentVal
             : previousVal;
         });
 
-        if (closest === 0) {
+        if (closestPoint === 0) {
           setIsClosing(true);
           break;
         }
 
         setIsSnapping(true);
-        setBottomsheetTranslateValue(maxHeight() - closest);
+        setBottomsheetTranslateValue(maxHeight() - closestPoint);
 
         break;
       case "default":
@@ -146,9 +161,9 @@ export const SolidBottomsheet: Component<SolidBottomsheetProps> = (props) => {
   };
 
   const onOverlayClick: JSX.EventHandlerUnion<HTMLDivElement, MouseEvent> = (
-    e
+    event
   ) => {
-    if (e.target.className === "sb-overlay") {
+    if (event.target.className === "sb-overlay") {
       setIsClosing(true);
     }
   };
