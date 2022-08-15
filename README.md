@@ -28,13 +28,12 @@ npm install solid-bottomsheet
 
 ## Props
 
-|       Prop       |          Required          |                                 Value(s)                                 |
-|:----------------:|:--------------------------:|:------------------------------------------------------------------------:|
-|      variant     |              ✅             |                            `default` \| `snap`                           |
-|      onClose     |              ✅             |                    A Function to close the bottomsheet                   |
+|       Prop       |          Required           |                                 Value(s)                                 |
+| :--------------: | :-------------------------: | :----------------------------------------------------------------------: |
+|     variant      |             ✅              |                           `default` \| `snap`                            |
+|     onClose      |             ✅              |                   A Function to close the bottomsheet                    |
 |    snapPoints    | ✅ (when variant is `snap`) | A Function to return an Array of numbers which represent the snap points |
 | defaultSnapPoint | ✅ (when variant is `snap`) |   A Function to return a number which represent the default snap point   |
-
 
 ## Examples
 
@@ -53,10 +52,7 @@ const App = () => {
     <>
       <button onClick={() => setOpen(true)}>Click me!</button>
       {isOpen() && (
-        <SolidBottomsheet
-          variant="default"
-          onClose={() => setOpen(false)}
-        >
+        <SolidBottomsheet variant="default" onClose={() => setOpen(false)}>
           <p>I'm inside the bottomsheet</p>
         </SolidBottomsheet>
       )}
