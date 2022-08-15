@@ -20,7 +20,6 @@ A light-weight, touch-interactive Bottomsheet UI component for [Solid JS](https:
 
 ![solid-bottomsheet](https://user-images.githubusercontent.com/7726029/184683308-0e65d177-0361-4d2a-9d88-de8afaba94e1.gif)
 
-
 ## Installation
 
 ```
