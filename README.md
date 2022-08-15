@@ -18,7 +18,11 @@ A light-weight, touch-interactive Bottomsheet UI component for [Solid JS](https:
 - Touch outside (overlay) of the bottomsheet to close
 - Last but not the least, smooth transitions/animations
 
-![solid-bottomsheet](https://user-images.githubusercontent.com/7726029/183614467-d7d20449-1f6e-4ac0-9763-7ddf59194d27.gif)
+
+
+https://user-images.githubusercontent.com/7726029/184681533-efe98189-8b2c-4cc8-a662-1d2c89e82964.mov
+
+
 
 ## Installation
 
