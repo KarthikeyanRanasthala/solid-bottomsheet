@@ -4,10 +4,6 @@
 
 A light-weight, touch-interactive Bottomsheet UI component for [Solid JS](https://www.solidjs.com/) with zero dependencies.
 
-## Demo
-
-- [CodeSandbox](https://codesandbox.io/s/solid-bottomsheet-rhu1vt?resolutionWidth=320&resolutionHeight=675&file=/src/App.tsx)
-
 ## Features
 
 - Two variants, `default` and `snap`
@@ -18,7 +14,12 @@ A light-weight, touch-interactive Bottomsheet UI component for [Solid JS](https:
 - Touch outside (overlay) of the bottomsheet to close
 - Last but not the least, smooth transitions/animations
 
+## Demo
+
+[CodeSandbox](https://codesandbox.io/s/solid-bottomsheet-rhu1vt?resolutionWidth=320&resolutionHeight=675&file=/src/App.tsx) - Open the sandbox preview in new tab and switch to responsive mode to use touch for interactions
+
 ![solid-bottomsheet](https://user-images.githubusercontent.com/7726029/184683308-0e65d177-0361-4d2a-9d88-de8afaba94e1.gif)
+
 
 ## Installation
 
