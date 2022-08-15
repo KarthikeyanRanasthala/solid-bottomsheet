@@ -2,7 +2,7 @@
 
 ![npm](https://img.shields.io/npm/v/solid-bottomsheet?flat) ![npm bundle size](https://img.shields.io/bundlephobia/minzip/solid-bottomsheet?flat) ![GitHub](https://img.shields.io/github/license/karthikeyanranasthala/solid-bottomsheet?flat)
 
-A light-weight Bottomsheet UI component for [Solid JS](https://www.solidjs.com/) with zero dependencies.
+A light-weight, touch-interactive Bottomsheet UI component for [Solid JS](https://www.solidjs.com/) with zero dependencies.
 
 ## Demo
 
@@ -10,10 +10,13 @@ A light-weight Bottomsheet UI component for [Solid JS](https://www.solidjs.com/)
 
 ## Features
 
-- Smooth animations
+- Two variants, `default` and `snap`
+- A handle for touch interactions
+- Swipe up/down to snap to configured snap points (for snap variant)
 - Swipe down to close
-- Predefined swipe down threshold to auto close
-- Click/Touch outside (overlay) to close
+- Predefined swipe down threshold to auto close (for default variant)
+- Touch outside (overlay) of the bottomsheet to close
+- Last but not the least, smooth transitions/animations
 
 ![solid-bottomsheet](https://user-images.githubusercontent.com/7726029/183614467-d7d20449-1f6e-4ac0-9763-7ddf59194d27.gif)
 
@@ -23,10 +26,23 @@ A light-weight Bottomsheet UI component for [Solid JS](https://www.solidjs.com/)
 npm install solid-bottomsheet
 ```
 
-## Example
+## Props
+
+|       Prop       |          Required          |                                 Value(s)                                 |
+|:----------------:|:--------------------------:|:------------------------------------------------------------------------:|
+|      variant     |              ✅             |                            `default` \| `snap`                           |
+|      onClose     |              ✅             |                    A Function to close the bottomsheet                   |
+|    snapPoints    | ✅ (when variant is `snap`) | A Function to return an Array of numbers which represent the snap points |
+| defaultSnapPoint | ✅ (when variant is `snap`) |   A Function to return a number which represent the default snap point   |
+
+
+## Examples
+
+### Default Variant
 
 ```jsx
 // App.jsx
+import { createSignal } from "solid-js";
 
 import "solid-bottomsheet/styles.css";
 import { SolidBottomsheet } from "solid-bottomsheet";
@@ -37,7 +53,40 @@ const App = () => {
     <>
       <button onClick={() => setOpen(true)}>Click me!</button>
       {isOpen() && (
-        <SolidBottomsheet onClose={() => setOpen(false)}>
+        <SolidBottomsheet
+          variant="default"
+          onClose={() => setOpen(false)}
+        >
+          <p>I'm inside the bottomsheet</p>
+        </SolidBottomsheet>
+      )}
+    </>
+  );
+};
+```
+
+### Snap Variant
+
+```jsx
+// App.jsx
+
+import { createSignal } from "solid-js";
+
+import "solid-bottomsheet/styles.css";
+import { SolidBottomsheet } from "solid-bottomsheet";
+
+const App = () => {
+  const [isOpen, setOpen] = createSignal(false);
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Click me!</button>
+      {isOpen() && (
+        <SolidBottomsheet
+          variant="snap"
+          defaultSnapPoint={({ maxHeight }) => maxHeight / 2}
+          snapPoints={({ maxHeight }) => [maxHeight, maxHeight / 4]}
+          onClose={() => setOpen(false)}
+        >
           <p>I'm inside the bottomsheet</p>
         </SolidBottomsheet>
       )}
@@ -48,9 +97,13 @@ const App = () => {
 
 ## Todo
 
-- (Docs) Add interactive example with stackblitz/codesandbox
 - (Docs) Add examples to use the package with skypack and others
 - (Feat) Make swipe down threshold configurable
 - (Feat) Reduce overlay opacity on swipe down
-- (Feat) Span points
 - (Feat) Non-blocking view
+
+## Links
+
+- [Changelog](https://github.com/KarthikeyanRanasthala/solid-bottomsheet/blob/main/CHANGELOG.md)
+- [GitHub](https://github.com/KarthikeyanRanasthala/solid-bottomsheet)
+- [NPM](https://www.npmjs.com/package/solid-bottomsheet)
